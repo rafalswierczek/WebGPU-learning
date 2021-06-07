@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+      "rootDir": "src/ts/",
+      "outDir": "dist/",
+      "target": "ES2018",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "types": [
+        "@webgpu/types"
+      ]
+    },
+    "exclude": [
+      "node_modules"
+    ],
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "display": "Recommended"
+  }

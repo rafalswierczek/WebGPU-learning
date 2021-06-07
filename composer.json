@@ -1,0 +1,24 @@
+{
+    "name": "rafalswierczek/web-gpu-learning",
+    "description": "Just learning WebGPU",
+    "type": "project",
+    "require-dev": {
+        "symfony/var-dumper": "^5.2"
+    },
+    "require": {
+        "monolog/monolog": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/php/App"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rafal Swierczek",
+            "email": "swierczekraf@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}
