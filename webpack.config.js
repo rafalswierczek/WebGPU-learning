@@ -1,15 +1,15 @@
 const path = require("path");
-const bundleOutputDir = "../public/build";
+const bundleOutputDir = "./public/build";
 
 module.exports = {
     mode: 'development',
     entry: {
-        main: "../src/ts/index.ts"  
+        main: "./src/ts/index.ts"  
     },
     output: {
         filename: "[name].bundle.js",
         path: path.join(__dirname, bundleOutputDir),
-        publicPath: '../public',
+        publicPath: './public',
         clean: true
     },
     devtool: "source-map",

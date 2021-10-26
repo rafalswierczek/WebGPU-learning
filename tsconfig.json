@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "rootDir": "../src/ts/",
-        "outDir": "dist/",
+        "rootDir": "./src/ts/",
+        "outDir": "./public/build/",
         "target": "ES2018",
         "strict": true,
         "esModuleInterop": true,
@@ -11,9 +11,6 @@
             "@webgpu/types"
         ]
     },
-    "include": [
-        "../src/ts/*"
-    ],
     "exclude": [
         "node_modules"
     ],

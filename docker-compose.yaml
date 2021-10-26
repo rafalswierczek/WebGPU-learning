@@ -18,9 +18,7 @@ services:
       environment: 
         - CHOKIDAR_USEPOLLING=true
       volumes:
-        - ./assets:/var/www/html/webgpu/assets
-        - ./public:/var/www/html/webgpu/public
-        - ./src/ts:/var/www/html/webgpu/src/ts
+        - ./:/var/www/html/webgpu/
       stdin_open: true
       tty: true
 

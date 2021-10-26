@@ -1,8 +1,7 @@
 {
   "name": "WebGPU",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Learning WebGPU",
-  "main": "index.js",
   "author": "Rafał Świerczek",
   "license": "MIT",
   "scripts": {
