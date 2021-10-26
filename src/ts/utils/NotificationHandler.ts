@@ -1,65 +1,73 @@
-import {Notification} from './Notification';
+import { Notification } from '../object/notification/notification';
+import { ErrorNotification } from '../object/notification/errorNotification';
+import { NoticeNotification } from '../object/notification/noticeNotification';
+import { SuccessNotification } from '../object/notification/successNotification';
+import { NotificationException } from '../exception/notificationException';
 
-class NotificationHandler
-{
-    private notifications: Notification[] = [];
+class NotificationHandler {
+    private errorNotifications: ErrorNotification[] = [];
+    private noticeNotifications: NoticeNotification[] = [];
+    private successNotifications: SuccessNotification[] = [];
 
-    public addNotification(type: string, message: string)
-    {
-        this.notifications.push(new  Notification(type, message));
+    public addErrorNotification(message: string) {
+        this.errorNotifications.push(new ErrorNotification(message));
     }
 
-    public getNotifications(type: string|null): Notification[]
+    public getErrorNotifications(): ErrorNotification[] {
+        return this.errorNotifications;
+    }
+
+    public addNoticeNotification(message: string) {
+        this.noticeNotifications.push(new NoticeNotification(message));
+    }
+
+    public getNoticeNotifications(): NoticeNotification[] {
+        return this.noticeNotifications;
+    }
+
+    public addSuccessNotification(message: string) {
+        this.successNotifications.push(new SuccessNotification(message));
+    }
+
+    public getSuccessNotifications(): SuccessNotification[] {
+        return this.successNotifications;
+    }
+
+    public getAllNotifications(): Notification[]
     {
-        if(type)
-        {
-            let typedNotifications: Notification[] = [];
-            
-            this.notifications.forEach(notification => {
-                if(notification.getType() === type)
-                    typedNotifications.push(notification);
-            });
+        let notifications: Notification[] = [];
 
-            return typedNotifications;
-        }
+        this.errorNotifications.forEach(errorNotification => {notifications.push(errorNotification)});
+        this.noticeNotifications.forEach(noticeNotification => {notifications.push(noticeNotification)});
+        this.successNotifications.forEach(successNotification => {notifications.push(successNotification)});
 
-        return this.notifications;
+        return notifications;
     }
 
     public displayInConsole()
     {
-        for(const notification of this.notifications)
-        {
-            switch(notification.getType())
-            {
-                case 'ERROR':
-                    console.error(notification.getMessage());
-                    break;
-                case 'NOTICE':
-                    console.warn(notification.getMessage());
-                    break;
-                case 'SUCCESS':
-                    console.log(notification.getMessage());
-                    break;
-            }
+        for (const errorNotification of this.errorNotifications) {
+            console.error(errorNotification.message);
+        }
+
+        for (const noticeNotification of this.noticeNotifications) {
+            console.warn(noticeNotification.message);
+        }
+
+        for (const successNotification of this.successNotifications) {
+            console.log('%c'+successNotification.message, 'color: green');
         }
     }
 
     public hasErrors(): boolean
     {
-        for(const notification of this.notifications)
-        {
-            if(notification.getType() === 'ERROR')
-                return true;
-        }
-
-        return false;
+        return this.errorNotifications !== [];
     }
 
     public throwIfError()
     {
         if(this.hasErrors())
-            throw new Error();
+            throw new NotificationException();
     }
 }
 

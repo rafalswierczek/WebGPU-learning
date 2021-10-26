@@ -1,4 +1,3 @@
-/node_modules/
 /vendor/
-/dist/build/
+/public/build
 todo.txt

@@ -2,12 +2,7 @@
 
 namespace App\Task;
 
-use App\WebGPUKernel\TaskInterface;
-
 abstract class Task implements TaskInterface
 {
-    public function execute(): bool
-    {
-        return false;
-    }
+    public abstract function execute(): bool;
 }

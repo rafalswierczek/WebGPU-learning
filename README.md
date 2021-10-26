@@ -1,7 +1,7 @@
 # WebGPU-learning
 Learning WebGPU before release
 
->GOALS:
+> GOALS:
 1. stable 60+ fps
 2. 2D 10000x10000 tiles map
 3. automatic render of map + movement

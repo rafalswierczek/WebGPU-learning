@@ -2,17 +2,24 @@
 
 namespace App;
 
-use App\WebGPUKernel\Kernel;
-use App\WebGPUKernel\PipeCollection;
+use App\Kernel\PipeKernel;
+use App\Pipe\{Pipe, PipeCollection};
+use App\Task\{TaskCollection, LaunchGameTask};
 
 final class Application
 {
     public function run()
     {
-        $pipeCollection = new PipeCollection();
-
-        $kernel = new Kernel($pipeCollection);
+        $kernel = new PipeKernel($this->getStartupPipeCollection());
 
         $kernel->processPipeline();
+    }
+
+    private function getStartupPipeCollection(): PipeCollection
+    {
+        $pipeCollection = new PipeCollection();
+        $pipe = new Pipe(new TaskCollection());
+
+        return $pipeCollection->add($pipe->addTask(new LaunchGameTask()));
     }
 }
