@@ -5,9 +5,12 @@ export class Application {
     static async run() {
         const webGPUFactory = new WebGPUFactory();
 
-        const adapter: GPUAdapter|null = await webGPUFactory.getAdapter();
-
-        const device: GPUDevice|undefined = await webGPUFactory.getDevice();
+        try {
+            webGPUFactory.prepare();
+        } catch (ex) {
+            alert('Application crashed')
+            console.error(ex);
+        }
 
         WebGPUAnimation.startAnimation();
     }
