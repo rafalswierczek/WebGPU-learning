@@ -1,8 +1,8 @@
 import { Notification } from '../object/notification/notification';
+import { NotificationException } from '../exception/notificationException';
 import { ErrorNotification } from '../object/notification/errorNotification';
 import { NoticeNotification } from '../object/notification/noticeNotification';
 import { SuccessNotification } from '../object/notification/successNotification';
-import { NotificationException } from '../exception/notificationException';
 
 class NotificationHandler {
     private errorNotifications: ErrorNotification[] = [];
