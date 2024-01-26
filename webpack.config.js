@@ -30,10 +30,12 @@ module.exports = {
                 }
             },
             {
-                test: /\.css$/,
-                sideEffects: true,
-                loader: "css-loader"
+                test: /\.wgsl$/,
+                loader: 'ts-shader-loader'
             }
         ]
+    },
+    watchOptions: {
+        poll: 1000
     }
 };

@@ -10,3 +10,7 @@ Learning WebGPU before release
 6. mouse clickable menu
 7. testing what will happen after window/canvas resize
 8. camera zoom
+
+docker compose up -d --build
+
+docker compose exec nodejs yarn watch

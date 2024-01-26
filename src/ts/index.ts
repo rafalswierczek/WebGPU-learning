@@ -1,17 +1,15 @@
-import notificationHandler from './utils/notificationHandler';
-import { checkWebGPUSupport } from './startup/checkWebgpuSupport';
-import { Application } from './application';
-import { FatalException } from './exception/fatalException';
+import notificationHandler from './Core/NotificationHandler/NotificationHandler';
+import { Application } from './Core/Application';
+import { Startup } from './Core/Startup';
 
 try {
-    checkWebGPUSupport();
+    Startup.checkWebGPUSupport();
 
     Application.run();
 } catch (exception) {
     notificationHandler.displayInConsole();
+
     alert("There is a problem with application. Check console (F12 > Console) for more information");
 
-    throw new FatalException("Cannot process application due to fatal error");
+    throw exception;
 }
-
-console.log('%cGame started!', 'color: green; font-weight: bold;');

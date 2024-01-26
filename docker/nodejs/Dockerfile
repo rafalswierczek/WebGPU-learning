@@ -11,4 +11,4 @@ RUN useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME
 
 USER $UNAME
 
-CMD npm i ; yarn dev ; node
+CMD yarn install ; yarn dev ; node
