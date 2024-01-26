@@ -1,0 +1,3 @@
+export class ExternalTextureBindingLayout implements GPUExternalTextureBindingLayout
+{
+}
