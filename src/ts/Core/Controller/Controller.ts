@@ -1,8 +1,8 @@
-import { Renderer } from "./Renderer";
+import { Renderer } from "../Renderer";
 
 export class Controller
 {
-    private renderer: Renderer;
+    private readonly renderer: Renderer;
     private initialized: boolean = false;
 
     public constructor(renderer: Renderer)

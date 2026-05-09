@@ -1,13 +1,16 @@
-import { Controller } from "./Controller";
+import { Controller } from "./Controller/Controller";
+import { MapEditorController } from "./Controller/MapEditorController";
 
-/** Attach all private functions to window. Usage in console: start() */
+/** Attach all private functions to window. Example usage in console: start() */
 export class API
 {
-    private controller: Controller;
+    private readonly controller: Controller;
+    private readonly mapEditorController: MapEditorController;
 
-    public constructor(controller: Controller)
+    public constructor(controller: Controller, mapEditorController: MapEditorController)
     {
         this.controller = controller;
+        this.mapEditorController = mapEditorController;
     }
 
     public init(): void
@@ -30,5 +33,10 @@ export class API
     private pause(): void
     {
         this.controller.pause();
+    }
+
+    private saveExampleMap(): void
+    {
+        this.mapEditorController.saveExampleMap();
     }
 }

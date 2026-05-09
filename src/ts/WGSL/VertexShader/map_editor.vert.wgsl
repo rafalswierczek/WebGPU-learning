@@ -1,7 +1,7 @@
 struct Camera // coords from the left bottom border of the world space
 {
-    offset_x: f32,
-    offset_y: f32,
+    x: u32,
+    y: u32,
 }
 
 struct Triangle

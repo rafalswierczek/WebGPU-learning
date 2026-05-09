@@ -1,7 +1,6 @@
 import { Canvas } from "./Canvas/Canvas";
 import { WebGPU } from "./WebGPU";
 import { Camera } from "./Camera";
-import { RenderPassHandler } from "./MapEditor/RenderPassHandler";
 
 export class Renderer
 {

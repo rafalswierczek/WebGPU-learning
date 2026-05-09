@@ -86,7 +86,7 @@ export class Database
                 const cursor = (e.target as IDBRequest<IDBCursorWithValue | null>).result;
 
                 if (cursor) {
-                    result[cursor.key as uint] = cursor.value as ImageBitmap;
+                    result[Number(cursor.key) as uint] = cursor.value as ImageBitmap;
                     cursor.continue();
                 }
             };
@@ -116,7 +116,7 @@ export class Database
         });
     }
 
-    public async getMap(): Promise<Record<string, Blob>>
+    public async getMapBin(): Promise<Record<string, Blob>>
     {
         const db = this.getDb();
 

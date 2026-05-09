@@ -1,9 +1,17 @@
-import { DataLengthForBufferException } from "../Exception/DataLengthForBufferException";
-import { BufferDescriptor } from "../../WebGPU/Buffer/BufferDescriptor";
-import { MasterBufferDescriptor } from "./MasterBufferDescriptor";
+import { DataLengthForBufferException } from "../src/ts/Core/Exception/DataLengthForBufferException";
+import { BufferDescriptor } from "../src/ts/WebGPU/Buffer/BufferDescriptor";
+import { MasterBufferDescriptor } from "../src/ts/WebGPU/Buffer/MasterBufferDescriptor";
+
+
+// this.device.queue.submit can be called only by renderer
+// maxQueuedUpdates is probably useless, threshold should be enough
+// promise chain in update function is probably useless, update must be sync anyway because data needs to updated each frame
+// stagingBuffersList: list is complicated, it should be better to have 1 ring per master buffer
+
+
 
 /**
- * Used for adding data from CPU do GPU fast without much overhead.
+ * Used for adding data from CPU to GPU fast without much overhead.
  * stagingBuffers field holds mapped source buffers used as a way to transport data to the master buffers. Master buffers are meant to be used by GPU.
  * 
  * Usage: let's say there are 3 buffers to update, vertex and index and one helper storage buffer.
@@ -29,11 +37,14 @@ export class StagingBufferRing
 {
     public readonly name: string;
 
-    /** List of buffers to be updated at once in update function */
-    public readonly masterBuffers: Record<string, GPUBuffer> = {}
+    /** List of destination buffers for GPU */
+    private readonly masterBuffers: Record<string, GPUBuffer> = {}
 
-    /** List of records. One staging record will match one master record. String in Record is label from MasterBufferDescriptor passed in the constructor */
-    private readonly stagingBuffersList: Array<Record<string, GPUBuffer>> = []
+    /**
+     * List of records. One staging record will match one master record. String in Record is label from MasterBufferDescriptor passed in the constructor.
+     * For example there are 4 lists, 3 staging buffers per list element. 
+     */
+    private readonly stagingBuffersList: Record<string, GPUBuffer>[] = []
 
     private readonly device: GPUDevice;
 
@@ -74,11 +85,15 @@ export class StagingBufferRing
         }
 
         this.queuedUpdates++;
-        this.pendingUpdate = this.pendingUpdate.then(() => this.doUpdate(masterBufferDataRecord)).finally(() => {
-            this.queuedUpdates--;
-        });
+        const updatePromise: Promise<void> = this.pendingUpdate.then(() => this.doUpdate(masterBufferDataRecord));
+        this.pendingUpdate = updatePromise.finally(() => { this.queuedUpdates--; });
 
-        return this.pendingUpdate;
+        return updatePromise;
+    }
+
+    public destroy(): void
+    {
+        // for (const stagingBuffer: GPUBuffer of Object.values(this.stagingBuffersList))
     }
 
     /**
@@ -93,21 +108,19 @@ export class StagingBufferRing
                 throw new Error(`Master buffer "${masterBufferName}" does not exist in StagingBufferRing "${this.name}"`);
             }
 
-            if (masterBufferNewData.byteLength > this.masterBuffers[masterBufferName].size) {
+            if (masterBufferNewData.byteLength !== this.masterBuffers[masterBufferName].size) {
                 throw new DataLengthForBufferException(this.masterBuffers[masterBufferName], masterBufferNewData);
             }
         }
 
         if (this.stagingBuffersList.length > this.threshold) {
-            throw new Error(`There are ${this.stagingBuffersList.length} staging buffers in StagingBufferRing with name "${this.name}". Max ${this.threshold} are allowed`);
+            throw new Error(`There are ${this.stagingBuffersList.length} staging buffer lists (${Object.values(masterBufferDataRecord).length} buffers per list element) in StagingBufferRing with name "${this.name}". Max ${this.threshold} lists are allowed`);
         }
         
         const stagingBuffers: Record<string, GPUBuffer> = this.getStagingBuffers(masterBufferDataRecord);
         const commandEncoder: GPUCommandEncoder = this.device.createCommandEncoder();
-        let totalDataSet = 0;
 
         for (const [stagingBufferName, stagingBuffer] of Object.entries(stagingBuffers)) {
-            const 
             const masterBufferData = masterBufferDataRecord[stagingBufferName];
 
             if (masterBufferData instanceof Float32Array) {
@@ -119,14 +132,6 @@ export class StagingBufferRing
             commandEncoder.copyBufferToBuffer(stagingBuffer, 0, this.masterBuffers[stagingBufferName], 0, stagingBuffer.size);
 
             stagingBuffer.unmap();
-
-            totalDataSet++;
-        }
-
-        const masterBuffersLength = Object.keys(this.masterBuffers).length;
-
-        if (totalDataSet !== masterBuffersLength) {
-            throw new Error(`Could not update all new master buffer data. Updated: ${totalDataSet}, Expected: ${masterBuffersLength}`);
         }
 
         this.device.queue.submit([commandEncoder.finish()]);

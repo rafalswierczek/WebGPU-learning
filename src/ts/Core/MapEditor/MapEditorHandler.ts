@@ -7,7 +7,6 @@ import { ShaderModuleDescriptor } from "../../WebGPU/Pipeline/ShaderModuleDescri
 import { VertexState } from "../../WebGPU/Pipeline/State/Vertex/VertexState";
 import { ColorTargetState } from "../../WebGPU/Pipeline/State/Fragment/ColorTargetState";
 import { VertexBufferLayout } from "../../WebGPU/Pipeline/State/Vertex/VertexBufferLayout";
-import { BufferBindingLayout } from "../../WebGPU/Buffer/BufferBindingLayout";
 import { BindGroupLayoutEntry } from "../../WebGPU/Pipeline/BindGroup/BindGroupLayoutEntry";
 import { BindGroupLayoutDescriptor } from "../../WebGPU/Pipeline/BindGroup/BindGroupLayoutDescriptor";
 import { RenderPassDescriptor } from "../../WebGPU/RenderPass/RenderPassDescriptor";
@@ -24,8 +23,10 @@ import { TextureDescriptor } from "../../WebGPU/Texture/TextureDescriptor";
 import { TextureViewDescriptor } from "../../WebGPU/Texture/TextureViewDescriptor";
 import { SamplerBindingLayout } from "../../WebGPU/Sampler/SamplerBindingLayout";
 import { TextureBindingLayout } from "../../WebGPU/Texture/TextureBindingLayout";
-import { BufferDescriptor } from "../../WebGPU/Buffer/BufferDescriptor";
 import { Camera } from "../Camera";
+import { StagedBuffer } from "../StagedBuffer";
+import { MasterBufferDescriptor } from "../../WebGPU/Buffer/MasterBufferDescriptor";
+import { BufferBindingLayout } from "../../WebGPU/Buffer/BufferBindingLayout";
 
 export class MapEditorHandler
 {
@@ -33,6 +34,7 @@ export class MapEditorHandler
     private readonly resourceLoader: ResourceLoader;
     private readonly context: GPUCanvasContext;
     private readonly camera: Camera;
+    private readonly cameraBuffer: StagedBuffer;
 
     public constructor(device: GPUDevice, resourceLoader: ResourceLoader, context: GPUCanvasContext, camera: Camera)
     {
@@ -40,56 +42,54 @@ export class MapEditorHandler
         this.resourceLoader = resourceLoader;
         this.context = context;
         this.camera = camera;
+        this.cameraBuffer = new StagedBuffer(
+            'buffer_camera_map_editor',
+            this.device,
+            new MasterBufferDescriptor('master_buffer_camera_map_editor', this.getCameraData().byteLength, GPUBufferUsage.UNIFORM),
+        );
     }
 
-    public async create(): Promise<void>
+    public async draw(commandEncoder: GPUCommandEncoder): Promise<void>
     {
+        this.cameraBuffer.update(this.getCameraData(), commandEncoder);
+
         const renderPassColorAttachment: RenderPassColorAttachment = new RenderPassColorAttachment(this.context.getCurrentTexture());
         const renderPassDescriptor: GPURenderPassDescriptor = new RenderPassDescriptor(
             'render_pass_map_editor',
             [renderPassColorAttachment],
         );
-        const commandEncoder: GPUCommandEncoder = this.device.createCommandEncoder();
         const renderPass: GPURenderPassEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+        const bindGroupLayout: GPUBindGroupLayout = this.createBindGroupLayout();
         
-        renderPass.setBindGroup(0, await this.getBindGroup());
-        renderPass.setPipeline(await this.getPipeline());
+        renderPass.setBindGroup(0, await this.getBindGroup(bindGroupLayout));
+        renderPass.setPipeline(await this.getPipeline(bindGroupLayout));
         // renderPass.drawIndexed(?);
         // renderPass.setIndexBuffer(?);
         // renderPass.setVertexBuffer(?);
         renderPass.end();
     }
 
-    private async getBindGroup(): Promise<GPUBindGroup>
+    private async getBindGroup(layout: GPUBindGroupLayout): Promise<GPUBindGroup>
     {
-        const textureView: GPUTextureView = await this.getView();
-        const sampler: GPUSampler = this.device.createSampler(new SamplerDescriptor(
-            'sampler_map_editor',
-        ));
-        
+        const sampler: GPUSampler = this.device.createSampler(new SamplerDescriptor('sampler_map_editor'));
 
         return this.device.createBindGroup(new BindGroupDescriptor(
             'bind_group_map_editor',
-            this.createBindGroupLayout(),
+            layout,
             [
-                { binding: 0, resource: textureView },
-                { binding: 1, resource: sampler },
+                { binding: 0, resource: this.cameraBuffer.masterBuffer },
+                { binding: 1, resource: await this.getSpritesheetView() },
+                { binding: 2, resource: sampler },
             ],
         ));
     }
 
-    private getCameraBuffer(): GPUBuffer
+    private getCameraData(): Uint32Array
     {
-        const data: Uint32Array = new Uint32Array([this.camera.getX(), this.camera.getY()]);
-        const cameraBuffer: GPUBuffer = this.device.createBuffer(new BufferDescriptor(
-            'camera_buffer_map_editor',
-            data.byteLength,
-            GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE,
-            true,
-        ));
+        return new Uint32Array([this.camera.getX(), this.camera.getY()]);
     }
 
-    private async getView(): Promise<GPUTextureView>
+    private async getSpritesheetView(): Promise<GPUTextureView>
     {
         const width = SpritesheetConfig.COLUMNS * SpritesheetConfig.IMAGE_SIZE;
         const height = SpritesheetConfig.ROWS * SpritesheetConfig.IMAGE_SIZE;
@@ -126,10 +126,11 @@ export class MapEditorHandler
     {
         const samplerLayout: GPUSamplerBindingLayout = new SamplerBindingLayout('non-filtering');
         const textureLayout: GPUTextureBindingLayout = new TextureBindingLayout('float', '2d-array');
+        const bufferLayout: GPUBufferBindingLayout = new BufferBindingLayout('uniform');
         const bindGroupLayoutEntry: GPUBindGroupLayoutEntry = new BindGroupLayoutEntry(
             0,
             GPUShaderStage.VERTEX,
-            undefined,
+            bufferLayout,
             samplerLayout,
             textureLayout,
         );
@@ -141,31 +142,20 @@ export class MapEditorHandler
         return this.device.createBindGroupLayout(bindGroupLayoutDescriptor);
     }
 
-    private async getPipeline(): Promise<GPURenderPipeline>
+    private async getPipeline(bindGroupLayout: GPUBindGroupLayout): Promise<GPURenderPipeline>
     {
-        const pipelineLayout: GPUPipelineLayout = this.createPipelineLayout();
+        const pipelineLayoutDescriptor: GPUPipelineLayoutDescriptor = new PipelineLayoutDescriptor('pipeline_layout_map_editor', [bindGroupLayout]);
+        const pipelineLayout: GPUPipelineLayout = this.device.createPipelineLayout(pipelineLayoutDescriptor);
         const vertexState: GPUVertexState = this.createVertexState();
         const fragmentState: GPUFragmentState = this.createFragmentState();
         const renderPipelineDescriptor: GPURenderPipelineDescriptor = new RenderPipelineDescriptor(
-            'pipeline_descriptor_map_editor',
+            'pipeline_map_editor',
             pipelineLayout,
             vertexState,
             fragmentState,
         );
 
         return this.device.createRenderPipelineAsync(renderPipelineDescriptor);
-    }
-
-    private createPipelineLayout(): GPUPipelineLayout
-    {
-        const bindGroupLayout: GPUBindGroupLayout = this.mapEditorBindGroup.createBindGroupLayout();
-
-        const pipelineLayoutDescriptor: GPUPipelineLayoutDescriptor = new PipelineLayoutDescriptor(
-            'pipeline_layout_descriptor_map_editor',
-            [bindGroupLayout],
-        );
-
-        return this.device.createPipelineLayout(pipelineLayoutDescriptor);
     }
 
     private createVertexState(): GPUVertexState
@@ -176,7 +166,6 @@ export class MapEditorHandler
         return new VertexState(
             vertexShaderModule,
             'main',
-            [new VertexBufferLayout()],
         );
     }
 

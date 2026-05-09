@@ -1,4 +1,4 @@
-import { BufferDescriptor } from "../../WebGPU/Buffer/BufferDescriptor";
+import { BufferDescriptor } from "./BufferDescriptor";
 
 export class MasterBufferDescriptor extends BufferDescriptor
 {
@@ -14,7 +14,7 @@ export class MasterBufferDescriptor extends BufferDescriptor
         size: GPUSize64,
         usage: GPUBufferUsageFlags,
     ) {
-        super(label, size, usage, false);
+        super(label, size, GPUBufferUsage.COPY_DST | usage, false);
         
         if (this.allowedUsages.includes(usage) === false) {
             throw new Error('Master buffer was set with wrong usage');
