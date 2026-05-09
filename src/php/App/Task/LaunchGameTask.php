@@ -6,14 +6,12 @@ use App\Component\Response;
 
 class LaunchGameTask extends Task
 {
-    public function execute(): bool
+    public function execute(): void
     {
         // todo: add application path
         $body = file_get_contents(__DIR__.'/../index.html');
 
         (new Response($body))->show();
-
-        return false;
     }
 
     public function __invoke()

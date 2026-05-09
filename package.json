@@ -1,6 +1,6 @@
 {
   "name": "WebGPU",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Learning WebGPU",
   "author": "Rafał Świerczek",
   "license": "MIT",
@@ -10,14 +10,15 @@
     "watch": "webpack --watch --mode development"
   },
   "dependencies": {
-    "@webgpu/types": "^0.1",
-    "typescript": "^4.9"
+    "@webgpu/types": "^0.1.69",
+    "jszip": "^3.10.1",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "css-loader": "^6.7",
-    "ts-loader": "^9.2",
-    "ts-shader-loader": "^2.0",
-    "webpack": "^5.75",
-    "webpack-cli": "^5.0"
+    "css-loader": "^7.1.4",
+    "ts-loader": "^9.5.4",
+    "ts-shader-loader": "^2.1.0",
+    "webpack": "^5.105.3",
+    "webpack-cli": "^6.0.1"
   }
 }

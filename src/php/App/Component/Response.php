@@ -18,7 +18,7 @@ class Response
         $this->body = $body;
     }
 
-    public function show(): void
+    public function show(): never
     {
         http_response_code($this->statusCode);
 
@@ -32,9 +32,10 @@ class Response
 
     private function setHeaders(array $headers): array
     {
-        foreach($headers as $key => $value)
+        foreach($headers as $key => $value) {
             $headers[$key] = strtolower($value);
-        
+        }
+
         return array_merge($this->headers, $headers);
     }
 }

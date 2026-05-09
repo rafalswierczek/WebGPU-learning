@@ -6,7 +6,7 @@ use App\Task\TaskInterface;
 
 interface PipeInterface
 {
-    public function processSequence(): self;
+    public function executeTasks(): self;
 
     public function addTask(TaskInterface $task): self;
 }

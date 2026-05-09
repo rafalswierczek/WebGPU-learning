@@ -1,97 +1,53 @@
+import { CanvasConfiguration } from '../WebGPU/Canvas/CanvasConfiguration';
 import { Canvas } from './Canvas/Canvas';
-import { CanvasConfigurationFactory } from './Factory/CanvasConfigurationFactory';
-import { CanvasFactory } from './Factory/CanvasFactory';
+import { CameraConfig } from './Config/CameraConfig';
 import { InvalidAdapterException } from './Exception/InvalidAdapterException';
 import { InvalidCanvasContextException } from "./Exception/InvalidCanvasContextException";
-import { MissingCanvasParentElementException } from "./Exception/MissingCanvasParentElementException";
 
 export class WebGPU
 {
-    private adapter: GPUAdapter|null = null;
+    public readonly adapter: GPUAdapter;
+    public readonly device: GPUDevice;
+    public readonly context: GPUCanvasContext;
+    public readonly canvasConfiguration: GPUCanvasConfiguration;
+    public readonly canvas: Canvas;
 
-    private device: GPUDevice|null = null;
-
-    private context: GPUCanvasContext|null = null;
-
-    private canvasConfiguration: GPUCanvasConfiguration|null = null;
-
-    private canvas: Canvas;
-
-    public constructor()
-    {
-        this.canvas = CanvasFactory.create();
+    private constructor(
+        adapter: GPUAdapter,
+        device: GPUDevice,
+        context: GPUCanvasContext,
+        canvasConfiguration: GPUCanvasConfiguration,
+        canvas: Canvas,
+    ) {
+        this.adapter = adapter;
+        this.device = device;
+        this.context = context;
+        this.canvasConfiguration = canvasConfiguration;
+        this.canvas = canvas;
     }
 
     /**
      * Create canvas element and configure context
      * 
      * @throws {InvalidAdapterException}
-     * @throws {MissingCanvasParentElementException}
      * @throws {InvalidCanvasContextException}
      */
-    public async init(): Promise<void>
+    public static async init(): Promise<WebGPU>
     {
         const adapter: GPUAdapter = await this.requestAdapter();
-
-        const device: GPUDevice = await this.requestDevice(adapter);
-
-        const canvasConfiguration: GPUCanvasConfiguration = CanvasConfigurationFactory.create(device);
-
-        const context: GPUCanvasContext = this.canvas.getContext();
-
+        const device: GPUDevice = await adapter.requestDevice();
+        const canvasConfiguration: GPUCanvasConfiguration = new CanvasConfiguration(device, navigator.gpu.getPreferredCanvasFormat());
+        const canvas: Canvas = new Canvas(CameraConfig.WIDTH, CameraConfig.HEIGHT, 'border: 1px solid black;');
+        const context: GPUCanvasContext = canvas.getContext();
         context.configure(canvasConfiguration);
 
-        this.adapter = adapter;
-        this.device = device;
-        this.canvasConfiguration = canvasConfiguration;
-        this.context = context;
-    }
-
-    public getCanvas(): Canvas
-    {
-        return this.canvas;
-    }
-
-    public getAdapter(): GPUAdapter
-    {
-        if (!this.adapter) {
-            throw new Error('You have to call init method in order to get adapter');
-        }
-
-        return this.adapter;
-    }
-
-    public getDevice(): GPUDevice
-    {
-        if (!this.device) {
-            throw new Error('You have to call init method in order to get device');
-        }
-
-        return this.device;
-    }
-
-    public getContext(): GPUCanvasContext
-    {
-        if (!this.context) {
-            throw new Error('You have to call init method in order to get context');
-        }
-
-        return this.context;
-    }
-
-    public getCanvasConfiguration(): GPUCanvasConfiguration
-    {
-        if (!this.canvasConfiguration) {
-            throw new Error('You have to call init method in order to get canvas configuration');
-        }
-
-        return this.canvasConfiguration;
+        return new WebGPU(adapter, device, context, canvasConfiguration, canvas);
     }
 
     /**
      * @throws {InvalidAdapterException}
      */
-    public async requestAdapter(): Promise<GPUAdapter>
+    private static async requestAdapter(): Promise<GPUAdapter>
     {
         const adapter: GPUAdapter|null = await navigator.gpu.requestAdapter();
 
@@ -100,10 +56,5 @@ export class WebGPU
         }
 
         return adapter;
-    }
-
-    public async requestDevice(adapter: GPUAdapter): Promise<GPUDevice>
-    {
-        return await adapter.requestDevice();
     }
 }

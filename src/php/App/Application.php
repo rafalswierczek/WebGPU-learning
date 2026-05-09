@@ -19,7 +19,8 @@ final class Application
     {
         $pipeCollection = new PipeCollection();
         $pipe = new Pipe(new TaskCollection());
+        $pipe->addTask(new LaunchGameTask());
 
-        return $pipeCollection->add($pipe->addTask(new LaunchGameTask()));
+        return $pipeCollection->add($pipe);
     }
 }

@@ -1,24 +1,19 @@
 export class RenderPassDescriptor implements GPURenderPassDescriptor
 {
-    public label: string;
-    
-    public colorAttachments: Iterable<GPURenderPassColorAttachment>;
-
-    public depthStencilAttachment?: GPURenderPassDepthStencilAttachment;
-    
-    public occlusionQuerySet?: GPUQuerySet;
-
-    public timestampWrites: GPURenderPassTimestampWrites;
-
-    public maxDrawCount: number;
+    public readonly label: string;
+    public readonly colorAttachments: (GPURenderPassColorAttachment|null)[];
+    public readonly depthStencilAttachment?: GPURenderPassDepthStencilAttachment;
+    public readonly occlusionQuerySet?: GPUQuerySet;
+    public readonly timestampWrites?: GPURenderPassTimestampWrites;
+    public readonly maxDrawCount?: GPUSize64;
     
     public constructor(
         label: string,
-        colorAttachments: Iterable<GPURenderPassColorAttachment>,
+        colorAttachments: (GPURenderPassColorAttachment|null)[],
         depthStencilAttachment?: GPURenderPassDepthStencilAttachment,
         occlusionQuerySet?: GPUQuerySet,
-        timestampWrites: GPURenderPassTimestampWrites = [],
-        maxDrawCount: number = 20000000
+        timestampWrites?: GPURenderPassTimestampWrites,
+        maxDrawCount?: GPUSize64, // 50000000
     ) {
         this.label = label;
         this.colorAttachments = colorAttachments;

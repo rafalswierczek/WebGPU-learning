@@ -4,5 +4,5 @@ namespace App\Task;
 
 interface TaskInterface
 {
-    public function execute(): bool;
+    public function execute(): void;
 }

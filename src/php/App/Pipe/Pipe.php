@@ -13,7 +13,7 @@ class Pipe implements PipeInterface
         $this->taskCollection = $taskCollection;
     }
     
-    public function processSequence(): self
+    public function executeTasks(): self
     {
         foreach ($this->taskCollection as $task) {
             $task->execute();

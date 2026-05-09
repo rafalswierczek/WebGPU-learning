@@ -1,0 +1,175 @@
+{
+    "behavior": {
+        "run-away": 0,
+        "neutral": 1,
+        "aggressive": 2
+    },
+
+    "animals": [
+        {
+            "name": "Red Butterfly",
+            "hp": 1,
+            "exp": 1,
+            "def": 0,
+            "behavior": 0
+        },
+        {
+            "name": "Green Butterfly",
+            "hp": 1,
+            "exp": 1,
+            "def": 0,
+            "behavior": 0
+        },
+        {
+            "name": "Blue Butterfly",
+            "hp": 1,
+            "exp": 1,
+            "def": 0,
+            "behavior": 0
+        },
+        {
+            "name": "Yellow Butterfly",
+            "hp": 1,
+            "exp": 1,
+            "def": 0,
+            "behavior": 0
+        },
+        {
+            "name": "Frog",
+            "hp": 2,
+            "exp": 1,
+            "def": 0,
+            "behavior": 0
+        },
+        {
+            "name": "Small Bird",
+            "hp": 2,
+            "exp": 1,
+            "def": 0,
+            "behavior": 0
+        },
+        {
+            "name": "Bug",
+            "hp": 6,
+            "exp": 2,
+            "def": 0,
+            "behavior": 0
+        },
+        {
+            "name": "Worm",
+            "hp": 3,
+            "exp": 1,
+            "dmg-min": 1,
+            "dmg-max": 1,
+            "atk": 2,
+            "def": 0,
+            "hp-run-away": 0,
+            "behavior": 1
+        },
+        {
+            "name": "Duck",
+            "hp": 15,
+            "exp": 2,
+            "dmg-min": 1,
+            "dmg-max": 2,
+            "atk": 6,
+            "def": 1,
+            "hp-run-away": 0,
+            "behavior": 1
+        },
+        {
+            "name": "Small Spider",
+            "hp": 2,
+            "exp": 2,
+            "dmg-min": 0,
+            "dmg-max": 1,
+            "atk": 1,
+            "def": 0,
+            "hp-run-away": 1,
+            "behavior": 1
+        },
+        {
+            "name": "Tarantula",
+            "hp": 4,
+            "exp": 2,
+            "dmg-min": 1,
+            "dmg-max": 2,
+            "atk": 2,
+            "def": 0,
+            "hp-run-away": 2,
+            "behavior": 1,
+            "attributes": {"poison": 1}
+        },
+        {
+            "name": "Poecilotheria",
+            "hp": 4,
+            "exp": 5,
+            "dmg-min": 1,
+            "dmg-max": 2,
+            "atk": 10,
+            "def": 0,
+            "hp-run-away": 1,
+            "behavior": 2,
+            "attributes": {"poison": 8}
+        },
+        {
+            "name": "Nephila",
+            "hp": 4,
+            "exp": 2,
+            "dmg-min": 1,
+            "dmg-max": 2,
+            "atk": 8,
+            "def": 0,
+            "hp-run-away": 2,
+            "behavior": 1,
+            "attributes": {"poison": 1}
+        },
+        {
+            "name": "Phoneutria",
+            "hp": 4,
+            "exp": 30,
+            "dmg-min": 1,
+            "dmg-max": 2,
+            "atk": 20,
+            "def": 0,
+            "hp-run-away": 1,
+            "behavior": 2,
+            "attributes": {"poison": 30}
+        }, 
+        {
+            "name": "Pterinochilus",
+            "hp": 4,
+            "exp": 25,
+            "dmg-min": 1,
+            "dmg-max": 2,
+            "atk": 15,
+            "def": 0,
+            "hp-run-away": 1,
+            "behavior": 2,
+            "attributes": {"poison": 10}
+        },
+        {
+            "name": "Big Cockroach",
+            "hp": 8,
+            "exp": 3,
+            "dmg-min": 0,
+            "dmg-max": 1,
+            "atk": 3,
+            "def": 0,
+            "hp-run-away": 4,
+            "behavior": 1
+        },
+        {
+            "name": "Leech",
+            "hp": 4,
+            "exp": 2,
+            "dmg-min": 1,
+            "dmg-max": 2,
+            "atk": 5,
+            "def": 0,
+            "hp-run-away": 0,
+            "behavior": 1
+        },
+        
+    ]
+}

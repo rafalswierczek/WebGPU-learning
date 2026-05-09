@@ -1,12 +1,11 @@
 export class PipelineLayoutDescriptor implements GPUPipelineLayoutDescriptor
 {
-    public label: string;
-    
-    public bindGroupLayouts: Iterable<GPUBindGroupLayout>;
+    public readonly label: string;
+    public readonly bindGroupLayouts: (GPUBindGroupLayout|null)[];
     
     public constructor (
         label: string,
-        bindGroupLayouts: Iterable<GPUBindGroupLayout>
+        bindGroupLayouts: (GPUBindGroupLayout|null)[],
     ) {
         this.label = label;
         this.bindGroupLayouts = bindGroupLayouts;

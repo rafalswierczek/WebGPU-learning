@@ -1,4 +1,4 @@
 export class SquareConfig
 {
-    static readonly LENGTH: number = 50;
+    static readonly LENGTH: uint = 50;
 }

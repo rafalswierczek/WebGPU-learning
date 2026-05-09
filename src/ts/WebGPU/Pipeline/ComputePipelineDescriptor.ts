@@ -1,18 +1,16 @@
 export class ComputePipelineDescriptor implements GPUComputePipelineDescriptor
 {
-    public label: string;
-    
-    public compute: GPUProgrammableStage;
-
-    public layout: GPUPipelineLayout|GPUAutoLayoutMode;
+    public readonly label: string;
+    public readonly compute: GPUProgrammableStage;
+    public readonly layout: GPUPipelineLayout|GPUAutoLayoutMode;
 
     public constructor (
         label: string,
+        layout: GPUPipelineLayout|GPUAutoLayoutMode,
         compute: GPUProgrammableStage,
-        layout: GPUPipelineLayout|GPUAutoLayoutMode
     ) {
         this.label = label;
-        this.compute = compute;
         this.layout = layout;
+        this.compute = compute;
     }
 }

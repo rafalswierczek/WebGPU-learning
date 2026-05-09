@@ -1,13 +1,13 @@
 export class Extent3DDict implements GPUExtent3DDict
 {
-    public width: GPUIntegerCoordinate;
-    public height: GPUIntegerCoordinate;
-    public depthOrArrayLayers: GPUIntegerCoordinate;
+    public readonly width: GPUIntegerCoordinate;
+    public readonly height?: GPUIntegerCoordinate;
+    public readonly depthOrArrayLayers?: GPUIntegerCoordinate;
 
     public constructor(
         width: GPUIntegerCoordinate,
-        height: GPUIntegerCoordinate,
-        depthOrArrayLayers: GPUIntegerCoordinate = 1
+        height?: GPUIntegerCoordinate, // 1
+        depthOrArrayLayers?: GPUIntegerCoordinate, // 1
     ) {
         this.width = width;
         this.height = height;

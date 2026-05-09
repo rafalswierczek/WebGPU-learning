@@ -1,4 +1,5 @@
-import notificationHandler from './Core/NotificationHandler/NotificationHandler';
+import './globals';
+import notificationHandler from './Core/NotificationHandler';
 import { Application } from './Core/Application';
 import { Startup } from './Core/Startup';
 

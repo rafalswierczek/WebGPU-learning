@@ -1,18 +1,15 @@
 export class BufferDescriptor implements GPUBufferDescriptor
 {
-    public label: string;
-
-    public size: GPUSize64;
-
-    public usage: GPUBufferUsageFlags;
-    
-    public mappedAtCreation: boolean;
+    public readonly label: string;
+    public readonly size: GPUSize64;
+    public readonly usage: GPUBufferUsageFlags;
+    public readonly mappedAtCreation: boolean;
 
     public constructor (
         label: string,
         size: GPUSize64,
         usage: GPUBufferUsageFlags,
-        mappedAtCreation: boolean = true
+        mappedAtCreation: boolean,
     ) {
         this.label = label;
         this.size = size;

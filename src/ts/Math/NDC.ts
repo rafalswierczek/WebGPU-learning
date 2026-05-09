@@ -13,20 +13,20 @@ export class NDC
         let result: number[][] = [];
 
         for (let i = 0; i < worldCoords.length; i++) {
-            const worldToCanvasRatioX: number = canvasWidth / 800; // world x coordinates must be based on 800 resulution
-            const worldToCanvasRatioY: number = canvasHeight / 600; // also y coords are hardcoded for 600 height
+            let worldToCanvasRatioX: number = canvasWidth / 800; // world x coordinates must be based on 800 resulution
+            let worldToCanvasRatioY: number = canvasHeight / 600; // also y coords are hardcoded for 600 height
 
-            const realWorldCoordX: number = worldToCanvasRatioX * worldCoords[i][0];
-            const realWorldCoordY: number = worldToCanvasRatioY * worldCoords[i][1];
+            let realWorldCoordX: number = worldToCanvasRatioX * worldCoords[i][0];
+            let realWorldCoordY: number = worldToCanvasRatioY * worldCoords[i][1];
 
-            const worldCoordXOffset: number = realWorldCoordX - cameraX;
-            const worldCoordYOffset: number = realWorldCoordY - cameraY;
+            let worldCoordXOffset: number = realWorldCoordX - cameraX;
+            let worldCoordYOffset: number = realWorldCoordY - cameraY;
 
-            const worldCoordXRatio: number = worldCoordXOffset / canvasWidth;
-            const worldCoordYRatio: number = worldCoordYOffset / canvasHeight;
+            let worldCoordXRatio: number = worldCoordXOffset / canvasWidth;
+            let worldCoordYRatio: number = worldCoordYOffset / canvasHeight;
 
-            const NDCX: number = 2 * worldCoordXRatio - 1;
-            const NDCY: number = 2 * worldCoordYRatio - 1;
+            let NDCX: number = 2 * worldCoordXRatio - 1;
+            let NDCY: number = 2 * worldCoordYRatio - 1;
 
             result[i] = [NDCX, NDCY];
         }

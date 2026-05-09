@@ -1,27 +1,21 @@
 export class RenderPipelineDescriptor implements GPURenderPipelineDescriptor
 {
-    public label: string;
-    
-    public layout: GPUPipelineLayout|GPUAutoLayoutMode;
-    
-    public vertex: GPUVertexState;
-
-    public fragment?: GPUFragmentState;
-
-    public primitive?: GPUPrimitiveState;
-
-    public depthStencil?: GPUDepthStencilState;
-
-    public multisample?: GPUMultisampleState;
+    public readonly label: string;
+    public readonly layout: GPUPipelineLayout|GPUAutoLayoutMode;
+    public readonly vertex: GPUVertexState;
+    public readonly fragment?: GPUFragmentState;
+    public readonly primitive?: GPUPrimitiveState;
+    public readonly depthStencil?: GPUDepthStencilState;
+    public readonly multisample?: GPUMultisampleState;
     
     public constructor (
         label: string,
         layout: GPUPipelineLayout|GPUAutoLayoutMode,
         vertex: GPUVertexState,
         fragment?: GPUFragmentState,
-        primitive?: GPUPrimitiveState,
+        primitive?: GPUPrimitiveState, // {}
         depthStencil?: GPUDepthStencilState,
-        multisample?: GPUMultisampleState
+        multisample?: GPUMultisampleState, // {}
         
     ) {
         this.label = label;

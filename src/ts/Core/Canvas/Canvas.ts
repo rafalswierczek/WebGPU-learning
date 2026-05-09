@@ -1,31 +1,18 @@
-import { CanvasSize } from "./CanvasSize";
 import { InvalidCanvasContextException } from "../Exception/InvalidCanvasContextException";
 
 export class Canvas
 {
-    private canvas: HTMLCanvasElement;
+    private readonly canvas: HTMLCanvasElement;
+    private readonly context: GPUCanvasContext;
 
-    private context: GPUCanvasContext;
-    
-    private parentElement: HTMLElement|null = null;
-
-    private canvasSize: CanvasSize;
-
-    /**
-     * @throws {InvalidCanvasContextException}
-     */
-    constructor(canvasSize: CanvasSize)
+    /** @throws {InvalidCanvasContextException} */
+    constructor(width: uint, height: uint, cssStyle: string)
     {
         this.canvas = document.createElement('canvas');
-        this.canvas.width = canvasSize.getWidth();
-        this.canvas.height = canvasSize.getHeight();
-        this.canvasSize = canvasSize;
+        this.canvas.style.cssText = cssStyle;
+        this.canvas.width = width;
+        this.canvas.height = height;
         this.context = this.getContextFromCanvas(this.canvas);
-    }
-
-    public getCanvasSize(): CanvasSize
-    {
-        return this.canvasSize;
     }
 
     public getCanvasElement(): HTMLCanvasElement
@@ -38,30 +25,7 @@ export class Canvas
         return this.context;
     }
 
-    public getParentElement(): HTMLElement|null
-    {
-        return this.parentElement;
-    }
-
-    public appendTo(element: HTMLElement): this
-    {
-        element.appendChild(this.canvas);
-
-        this.parentElement = element;
-
-        return this;
-    }
-
-    public setStyle(cssStyle: string): this
-    {
-        this.canvas.style.cssText = cssStyle;
-
-        return this;
-    }
-
-    /**
-     * @throws {InvalidCanvasContextException}
-     */
+    /** @throws {InvalidCanvasContextException} */
     private getContextFromCanvas(canvas: HTMLCanvasElement): GPUCanvasContext
     {
         const context = canvas.getContext('webgpu');

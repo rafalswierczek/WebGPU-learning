@@ -14,7 +14,7 @@ final class PipeKernel
     {   
         foreach($this->pipeCollection as $pipe)
         {
-            $pipe->processSequence();
+            $pipe->executeTasks();
         }
     }
 }

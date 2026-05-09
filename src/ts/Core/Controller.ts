@@ -3,7 +3,6 @@ import { Renderer } from "./Renderer";
 export class Controller
 {
     private renderer: Renderer;
-
     private initialized: boolean = false;
 
     public constructor(renderer: Renderer)
@@ -11,13 +10,10 @@ export class Controller
         this.renderer = renderer;
     }
 
-    /**
-     * Run automatically
-     */
     public init(): void
     {
         if (true === this.initialized) {
-            console.log('%cCannot initialize controller more than once.', 'color: yellow;');
+            console.warn('Cannot initialize controller more than once.');
 
             return;
         }
@@ -35,9 +31,9 @@ export class Controller
             return;
         }
 
-        console.log('%cGame started!', 'color: green; font-weight: bold;');
-
         this.renderer.start();
+
+        console.log('%cGame started!', 'color: green; font-weight: bold;');
     }
 
     public pause(): void
@@ -48,8 +44,8 @@ export class Controller
             return;
         }
 
-        console.log('%cGame stopped!', 'color: yellow; font-weight: bold;');
-
         this.renderer.stop();
+        
+        console.log('%cGame stopped!', 'color: yellow; font-weight: bold;');
     }
 }

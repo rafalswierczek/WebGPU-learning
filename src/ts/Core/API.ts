@@ -1,5 +1,6 @@
 import { Controller } from "./Controller";
 
+/** Attach all private functions to window. Usage in console: start() */
 export class API
 {
     private controller: Controller;
@@ -9,22 +10,25 @@ export class API
         this.controller = controller;
     }
 
-    public start(): void
+    public init(): void
+    {
+        Object.getOwnPropertyNames(API.prototype)
+            .filter(name => (name !== 'constructor' && typeof (this as any)[name] === 'function'))
+            .forEach(elem => {
+                window[elem as any] = (this as any)[elem].bind(this);
+            })
+        ;
+    }
+
+    // window:
+
+    private start(): void
     {
         this.controller.start();
     }
 
-    public pause(): void
+    private pause(): void
     {
         this.controller.pause();
-    }
-    
-    public init(): void
-    {
-        for (let key in this) {
-            if (this.hasOwnProperty(key) && typeof this[key] === 'function') {
-                (window as any)[key] = this[key];
-            }
-        }
     }
 }

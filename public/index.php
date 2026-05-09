@@ -6,5 +6,4 @@ use Symfony\Component\VarDumper;
 use App\Application;
 
 $application = new Application();
-
 $application->run();

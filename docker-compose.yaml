@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   nginx:
     container_name: webgpu-nginx
@@ -14,7 +12,9 @@ services:
 
   nodejs:
       container_name: webgpu-nodejs
-      build: docker/nodejs
+      build:
+        context: .
+        dockerfile: docker/nodejs/Dockerfile
       environment: 
         - CHOKIDAR_USEPOLLING=true
       volumes:
@@ -24,7 +24,9 @@ services:
 
   php:
     container_name: webgpu-php
-    build: docker/php
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
     expose:
       - 9000
     volumes:
