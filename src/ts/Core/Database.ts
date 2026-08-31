@@ -36,6 +36,11 @@ export class Database
                     db.createObjectStore(this.MAP_STORE);
                     console.log(`Object store "${this.MAP_STORE}" has been created`);
                 }
+
+                if (!db.objectStoreNames.contains(this.SPRITESHEET_STORE)) {
+                    db.createObjectStore(this.SPRITESHEET_STORE);
+                    console.log(`Object store "${this.SPRITESHEET_STORE}" has been created`);
+                }
             };
 
             req.onsuccess = (e: Event) => {
@@ -98,7 +103,7 @@ export class Database
         });
     }
 
-    public async saveMap(mapBin: Record<string, Blob>): Promise<void>
+    public async saveMapBin(mapBin: Record<string, Blob>): Promise<void>
     {
         const db = this.getDb();
 

@@ -4,20 +4,23 @@ import { Chunk } from "../MapEditor/Chunk";
 import { Tile } from "../MapEditor/Tile";
 import { MapGenerator } from "../MapEditor/MapGenerator";
 import { Database } from "../Database";
+import { ResourceLoader } from "../ResourceLoader";
 
 export class MapEditorController
 {
     private readonly canvas: HTMLCanvasElement;
     private readonly mapGenerator: MapGenerator;
     private readonly database: Database;
+    private readonly resourceLoader: ResourceLoader;
     private clickHandlerRef: any;
     private selectedTileCoords: coordsWs|null = null;
 
-    public constructor(canvas: HTMLCanvasElement, mapGenerator: MapGenerator, database: Database)
+    public constructor(canvas: HTMLCanvasElement, mapGenerator: MapGenerator, database: Database, resourceLoader: ResourceLoader)
     {
         this.canvas = canvas;
         this.mapGenerator = mapGenerator;
         this.database = database;
+        this.resourceLoader = resourceLoader;
     }
 
     public saveExampleMap(): void
@@ -60,7 +63,7 @@ export class MapEditorController
 
         const mapBin: Record<string, Blob> = this.mapGenerator.getMapBin();
 
-        this.database.saveMap(mapBin);
+        this.database.saveMapBin(mapBin);
     }
 
     public start(cameraCoords: coordsWs): void
@@ -71,6 +74,17 @@ export class MapEditorController
     public stop(): void
     {
         this.removeClickListener();
+    }
+
+    public async prepareData()
+    {
+        const mapBin: Record<string, Blob> = await this.resourceLoader.getMapBin();
+
+        for (const [chunkName, chunkBlob] of Object.entries(mapBin)) {
+            const chunk: Chunk = await MapGenerator.chunkFromBlob(chunkBlob);
+
+            for (const )
+        }
     }
 
     public async download(mapBin: Record<string, Blob>): Promise<void>

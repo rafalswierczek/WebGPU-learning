@@ -19,6 +19,7 @@ export class Application
         const renderer: Renderer = new Renderer(webGPU, camera);
 
         const database: Database = Database.getInstance();
+        await database.init();
 
         const resourceLoader: ResourceLoader = new ResourceLoader(database);
 

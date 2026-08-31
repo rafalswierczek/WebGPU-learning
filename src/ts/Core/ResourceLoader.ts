@@ -68,7 +68,7 @@ export class ResourceLoader
             return mapBinDb;
         }
 
-        const blob: Blob = await fetch(`maps/vita_map.zip`).then(r => r.blob());
+        const blob: Blob = await fetch(`vita_map.zip`).then(r => r.blob());
         const zip: JSZip = await JSZip.loadAsync(blob);
         const mapBin: Record<string, Blob> = {};
         const files: JSZipObject[] = Object.values(zip.files).filter(f => !f.dir);
@@ -83,7 +83,7 @@ export class ResourceLoader
         );
 
         this.mapBin = mapBin;
-        this.database.saveMap(mapBin).catch((err: Error): void => {
+        this.database.saveMapBin(mapBin).catch((err: Error): void => {
             console.error('Failed to save map to DB:', err);
         });
 
