@@ -1,0 +1,10 @@
+{
+    "brushSize": [2, 2],
+    "speedFactor": 1.2,
+    "collision": [533, 534],
+    "type": "default",
+    "textures": [
+        [531, 532],
+        [533, 534]
+    ]
+}

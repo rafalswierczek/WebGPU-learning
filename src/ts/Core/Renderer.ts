@@ -1,4 +1,5 @@
 import { Canvas } from "./Canvas/Canvas";
+import { RenderPassHandler } from "./RenderPassHandler";
 import { WebGPU } from "./WebGPU";
 import { Camera } from "./Camera";
 
@@ -27,15 +28,13 @@ export class Renderer
             throw new Error('Missing body element');
         }
 
-        parentElement.appendChild(this.canvas.getCanvasElement());
+        parentElement.appendChild(this.canvas.getContainerElement());
 
         this.canvasDisplayed = true;
     }
 
     public start(): void
     {
-        this.camera.addKeyboardEvents();
-
         this.frameId = requestAnimationFrame(this.renderFrame.bind(this));
 
         this.started = true;
@@ -43,8 +42,6 @@ export class Renderer
 
     public stop(): void
     {
-        this.camera.removeKeyboardEvents();
-
         cancelAnimationFrame(this.frameId);
 
         this.started = false;
@@ -71,14 +68,14 @@ export class Renderer
             throw new Error('Missing RenderPassHandler');
         }
 
-        const commandEncoder: GPUCommandEncoder = this.renderPassHandler.getCommandEncoder();
+        const commandEncoder: GPUCommandEncoder = this.device.createCommandEncoder();
 
-        this.renderPassHandler.handle();
+        this.renderPassHandler.handle(commandEncoder);
 
         this.device.queue.submit([commandEncoder.finish()]);
 
         this.camera.move();
 
-        this.frameId = requestAnimationFrame(this.renderFrame);
+        this.frameId = requestAnimationFrame(this.renderFrame.bind(this));
     }
 }

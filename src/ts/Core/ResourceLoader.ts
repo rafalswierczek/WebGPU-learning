@@ -1,92 +1,49 @@
-import JSZip, { JSZipObject } from "jszip";
 import { Database } from "./Database";
+import { TextureLibrary, textureRow } from "./Textures/TextureLibrary";
+import { TextureRepository } from "./Textures/TextureRepository";
 
+/**
+ * Zasoby wczytane raz, na starcie aplikacji.
+ *
+ * Sieć jest dotykana wyłącznie przy pierwszym uruchomieniu: leci jeden fetch po `textures.zip`,
+ * a jego zawartość ląduje w IndexedDB. Każdy kolejny start czyta już tylko bazę - dokładnie
+ * tak samo jak mapa.
+ *
+ * Na wyjściu są dwie rzeczy: biblioteka (drzewo folderów i pędzli, czyli to, co widać
+ * w oknie Tile) i gotowe obrazy dla GPU.
+ */
 export class ResourceLoader
 {
-    private database: Database
-    private spritesheets: Record<uint, ImageBitmap>|null = null;
-    private mapBin: Record<string, Blob>|null = null;
+    private readonly library: TextureLibrary;
+    private readonly tileTextures: Record<uint, ImageBitmap>;
 
-    public constructor(database: Database)
+    private constructor(library: TextureLibrary, tileTextures: Record<uint, ImageBitmap>)
     {
-        this.database = database; 
+        this.library = library;
+        this.tileTextures = tileTextures;
     }
 
-    public async getSpritesheets(): Promise<Record<uint, ImageBitmap>>
+    public static async init(database: Database): Promise<ResourceLoader>
     {
-        if (this.spritesheets !== null) {
-            return this.spritesheets;
-        }
-        
-        const spritesheetsDb: Record<uint, ImageBitmap> = await this.database.getSpritesheets();
+        const rows: textureRow[] = await new TextureRepository(database).load();
 
-        if (!empty(spritesheetsDb)) {
-            this.spritesheets = spritesheetsDb;
-
-            return spritesheetsDb;
+        if (rows.length === 0) {
+            throw new Error('No textures found - assets/Textures is empty or textures.zip is missing');
         }
 
-        const loadSpritesheet = async (id: uint): Promise<ImageBitmap> => {
-            const response: Response = await fetch(`spritesheets/spritesheet_${id}.png`);
-            const blob: Blob = await response.blob();
-            
-            return await createImageBitmap(blob);
-        };
-
-        const spritesheetsCount: uint = 3;
-        const spritesheets: Record<uint, ImageBitmap> = {};
-        const promises: Promise<void>[] = [];
-
-        for (let i: uint = 0; i < spritesheetsCount; i++) {
-            promises.push((async (): Promise<void> => {
-                const bitmap: ImageBitmap = await loadSpritesheet(i);
-                spritesheets[i] = bitmap;
-            })());
-        }
-
-        await Promise.all(promises);
-
-        this.spritesheets = spritesheets;
-        this.database.saveSpritesheets(spritesheets).catch((err: Error): void => {
-            console.error('Failed to save spritesheets to DB:', err);
-        });
-
-        return spritesheets;
-    }
-
-    public async getMapBin(): Promise<Record<string, Blob>>
-    {
-        if (this.mapBin !== null) {
-            return this.mapBin;
-        }
-        
-        const mapBinDb: Record<string, Blob> = await this.database.getMapBin();
-
-        if (!empty(mapBinDb)) {
-            this.mapBin = mapBinDb;
-
-            return mapBinDb;
-        }
-
-        const blob: Blob = await fetch(`vita_map.zip`).then(r => r.blob());
-        const zip: JSZip = await JSZip.loadAsync(blob);
-        const mapBin: Record<string, Blob> = {};
-        const files: JSZipObject[] = Object.values(zip.files).filter(f => !f.dir);
-
-        await Promise.all(
-            files.map(async (file: JSZipObject): Promise<void> => {
-                const blob: Blob = await file.async('blob');
-                const chunkName: string = file.name.slice(0, -'_chunk.vitamap'.length);
-
-                mapBin[chunkName] = blob;
-            })
+        return new ResourceLoader(
+            TextureLibrary.build(rows),
+            await TextureRepository.decode(rows),
         );
+    }
 
-        this.mapBin = mapBin;
-        this.database.saveMapBin(mapBin).catch((err: Error): void => {
-            console.error('Failed to save map to DB:', err);
-        });
+    public getLibrary(): TextureLibrary
+    {
+        return this.library;
+    }
 
-        return mapBin;
+    public getTileTextures(): Record<uint, ImageBitmap>
+    {
+        return this.tileTextures;
     }
 }

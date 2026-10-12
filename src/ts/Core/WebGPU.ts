@@ -1,6 +1,6 @@
 import { CanvasConfiguration } from '../WebGPU/Canvas/CanvasConfiguration';
 import { Canvas } from './Canvas/Canvas';
-import { CameraConfig } from './Config/CameraConfig';
+import { ResolutionConfig } from './Config/ResolutionConfig';
 import { InvalidAdapterException } from './Exception/InvalidAdapterException';
 import { InvalidCanvasContextException } from "./Exception/InvalidCanvasContextException";
 
@@ -37,7 +37,10 @@ export class WebGPU
         const adapter: GPUAdapter = await this.requestAdapter();
         const device: GPUDevice = await adapter.requestDevice();
         const canvasConfiguration: GPUCanvasConfiguration = new CanvasConfiguration(device, navigator.gpu.getPreferredCanvasFormat());
-        const canvas: Canvas = new Canvas(CameraConfig.WIDTH, CameraConfig.HEIGHT, 'border: 1px solid black;');
+        // rozdzielczosc domyslna, a nie docelowa: ustawienia siedza w bazie, ktorej jeszcze nie ma.
+        // Application podmieni ja na wybrana, gdy tylko wczyta ustawienia
+        const size: { width: uint, height: uint } = ResolutionConfig.getDefault();
+        const canvas: Canvas = new Canvas(size.width, size.height, 'border: 1px solid black;');
         const context: GPUCanvasContext = canvas.getContext();
         context.configure(canvasConfiguration);
 

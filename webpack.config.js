@@ -1,4 +1,5 @@
 const path = require("path");
+const TexturesZipPlugin = require("./tools/TexturesZipPlugin");
 const bundleOutputDir = "./public/build";
 
 module.exports = {
@@ -35,6 +36,12 @@ module.exports = {
             }
         ]
     },
+    plugins: [
+        new TexturesZipPlugin({
+            sourceDir: path.join(__dirname, "assets", "Textures"),
+            outputFile: path.join(__dirname, "public", "assets", "textures.zip"),
+        })
+    ],
     watchOptions: {
         poll: 1000
     }
